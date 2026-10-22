@@ -1,0 +1,13 @@
+profile,duration_h,fec_per_year,annual_limit_ok,throughput_used_up_year,temp_ok,c_rate_ok,mean_soc,mean_soc_ok,break_year,soh_end_of_warranty,below_retention_at_end
+rce_opt,2,654.02,False,9,True,True,0.49003,True,1,0.65773,True
+rce_opt,4,492.1,False,12,True,True,0.51639,False,1,0.7126,False
+rce_2c,2,623.32,False,9,True,True,0.49131,True,1,0.6681,True
+rce_2c,4,491.84,False,12,True,True,0.51634,False,1,0.71269,False
+rce_1c,2,360.99,True,0,True,True,0.51683,False,1,0.75688,False
+rce_1c,4,356.52,True,0,True,True,0.53248,False,1,0.7585,False
+rce_w10,2,556.2,False,10,True,True,0.48794,True,1,0.69077,True
+rce_w10,4,442.03,False,13,True,True,0.50484,False,1,0.72945,False
+rce_w20,2,451.64,False,13,True,True,0.48756,True,1,0.72609,False
+rce_w20,4,371.39,False,15,True,True,0.49704,True,1,0.75326,False
+reserves,2,218.25,True,0,True,True,0.49156,True,0,0.80497,False
+reserves,4,109.13,True,0,True,True,0.49578,True,0,0.84185,False

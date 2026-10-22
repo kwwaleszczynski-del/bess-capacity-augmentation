@@ -1,0 +1,11 @@
+{
+  "prices": {
+    "start": "2025-10-01",
+    "end": "2026-09-30"
+  },
+  "contract_years": 17,
+  "requirement": "four_hour_rule",
+  "temp_c": 25.0,
+  "risk_samples": 500,
+  "runtime_s": 102.7
+}

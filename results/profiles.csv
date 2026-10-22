@@ -1,0 +1,28 @@
+profile,label,duration_h,revenue_pln_per_mw_year,discharged_mwh_per_year,cycles_per_day,rainflow_fec_per_year,mean_soc,efc_share_depth_below_20pct,efc_share_depth_above_80pct
+rce_opt,"RCE arbitrage, no cycle limit",1,2.5381e+05,794.42,2.1765,851.68,0.47558,0.0078749,0.70084
+rce_opt,"RCE arbitrage, no cycle limit",1.5,3.5765e+05,1060.6,1.9373,758.07,0.48366,0.11263,0.74761
+rce_opt,"RCE arbitrage, no cycle limit",2,4.4967e+05,1308,1.7918,701.16,0.49003,0.083404,0.77874
+rce_opt,"RCE arbitrage, no cycle limit",2.5,5.2936e+05,1525.1,1.6713,654.01,0.49658,0.07232,0.76001
+rce_opt,"RCE arbitrage, no cycle limit",3,5.977e+05,1706.9,1.5589,609.99,0.5033,0.064559,0.75265
+rce_opt,"RCE arbitrage, no cycle limit",3.5,6.5733e+05,1849,1.4474,566.37,0.5102,0.061935,0.73366
+rce_opt,"RCE arbitrage, no cycle limit",4,7.108e+05,1968.4,1.3482,527.57,0.51639,0.055964,0.73138
+rce_2c,"RCE arbitrage, max 2 cycles/day",1,2.508e+05,652.81,1.7885,699.86,0.47952,0.030673,0.79012
+rce_2c,"RCE arbitrage, max 2 cycles/day",1.5,3.5585e+05,961.08,1.7554,686.91,0.48615,0.07957,0.78335
+rce_2c,"RCE arbitrage, max 2 cycles/day",2,4.4867e+05,1246.6,1.7077,668.25,0.49131,0.070021,0.79554
+rce_2c,"RCE arbitrage, max 2 cycles/day",2.5,5.2892e+05,1494.2,1.6375,640.78,0.4974,0.067917,0.76317
+rce_2c,"RCE arbitrage, max 2 cycles/day",3,5.9754e+05,1693.6,1.5467,605.24,0.50365,0.062405,0.75219
+rce_2c,"RCE arbitrage, max 2 cycles/day",3.5,6.5729e+05,1844.9,1.4441,565.1,0.51019,0.06191,0.73369
+rce_2c,"RCE arbitrage, max 2 cycles/day",4,7.108e+05,1967.4,1.3475,527.29,0.51634,0.055813,0.73178
+rce_1c,"RCE arbitrage, max 1 cycle/day",1,2.0586e+05,362.15,0.99219,388.25,0.51081,0.050788,0.81955
+rce_1c,"RCE arbitrage, max 1 cycle/day",1.5,2.9821e+05,542.27,0.99045,387.57,0.5141,0.055075,0.80662
+rce_1c,"RCE arbitrage, max 1 cycle/day",2,3.8443e+05,721.97,0.98901,387.01,0.51683,0.053302,0.81348
+rce_1c,"RCE arbitrage, max 1 cycle/day",2.5,4.6432e+05,901.26,0.98768,386.49,0.52012,0.055681,0.80142
+rce_1c,"RCE arbitrage, max 1 cycle/day",3,5.3841e+05,1078.6,0.98502,385.45,0.5241,0.056615,0.81027
+rce_1c,"RCE arbitrage, max 1 cycle/day",3.5,6.0672e+05,1253.9,0.98156,384.09,0.52817,0.057356,0.8128
+rce_1c,"RCE arbitrage, max 1 cycle/day",4,6.6928e+05,1426.1,0.97675,382.21,0.53248,0.056724,0.80418
+rce_w10,"RCE arbitrage, SoC window 10-90 %",2,3.7731e+05,1112.4,1.5238,596.29,0.48794,0.10754,0
+rce_w10,"RCE arbitrage, SoC window 10-90 %",4,6.2245e+05,1768.1,1.211,473.89,0.50484,0.067964,0
+rce_w20,"RCE arbitrage, SoC window 20-80 %",2,2.9671e+05,903.28,1.2374,484.2,0.48756,0.14667,0
+rce_w20,"RCE arbitrage, SoC window 20-80 %",4,5.1466e+05,1485.6,1.0175,398.16,0.49704,0.093926,0
+reserves,"Mostly reserves (synthetic, shallow cycles)",2,,436.5,0.59795,233.95,0.49156,0.82795,0
+reserves,"Mostly reserves (synthetic, shallow cycles)",4,,436.5,0.29898,116.98,0.49578,0.99815,0

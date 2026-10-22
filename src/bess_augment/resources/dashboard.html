@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Battery capacity augmentation</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"
+        integrity="sha384-cCVCZkAjYNxaYKbM8lsArLznDF/SvMFr1jcZrvOpSTCa0W40ZAdLzHCEulnUa5i7" crossorigin="anonymous"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10); --accent: #2a78d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
+      --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10); --accent: #3987e5;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10); --accent: #3987e5;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.lede { color: var(--ink2); margin: 0 0 16px; max-width: 900px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin: 12px 0 16px; }
+  .filters label { display: flex; flex-direction: column; font-size: 12px; color: var(--ink2); gap: 4px; }
+  select { font: inherit; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); min-width: 150px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; min-width: 0; }
+  .card h2 { font-size: 14px; margin: 0 0 6px; color: var(--ink); }
+  .plot { width: 100%; height: 380px; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .tile .k { font-size: 12px; color: var(--ink2); }
+  .tile .v { font-size: 20px; font-weight: 600; }
+  .tile .s { font-size: 12px; color: var(--muted); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+  .note { color: var(--muted); font-size: 12px; margin-top: 16px; }
+  .wide { grid-column: 1 / -1; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } .tiles { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .plot { height: 520px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Keeping an ageing battery in the Polish capacity market</h1>
+  <p class="lede">A 1 MW lithium iron phosphate battery with a capacity-market contract loses energy as it ages. The
+    charts show when its available energy falls below what the obligation requires and what each way of keeping it
+    there costs: overbuild at the start, augmentation, restricted operation or module replacement. Ageing model fitted
+    to open cell data, arbitrage revenue from PSE RCE prices (Oct 2025 - Sep 2026). Not investment or legal advice.</p>
+  <div class="filters">
+    <label>Battery<select id="dur"></select></label>
+    <label>Operating profile<select id="prof"></select></label>
+    <label>Cell temperature<select id="temp"></select></label>
+    <label>Strategy<select id="strat"></select></label>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div class="grid">
+    <div class="card"><h2>Available energy against the requirement</h2><div id="energy" class="plot"></div></div>
+    <div class="card"><h2>NPV of each strategy against the cheapest</h2><div id="npv" class="plot"></div></div>
+    <div class="card"><h2>State of health of the initial modules</h2><div id="soh" class="plot"></div></div>
+    <div class="card"><h2>Cash flows of the selected strategy</h2><div id="cf" class="plot"></div></div>
+    <div class="card wide"><h2>Strategies</h2><div id="table"></div></div>
+  </div>
+  <p class="note" id="note"></p>
+</main>
+<script>
+const DATA = /*__DATA__*/null;
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = (v, d = 0) => v.toLocaleString("en-US", {maximumFractionDigits: d, minimumFractionDigits: d});
+const ORDER = ["none", "overbuild", "augment_fix", "augment_opt", "replace_opt", "restrict_rce_2c", "restrict_rce_1c",
+               "restrict_rce_w10", "restrict_rce_w20"];
+
+function fill(sel, items, value) {
+  sel.innerHTML = items.map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
+  if (value !== undefined && items.some(([v]) => String(v) === String(value))) sel.value = value;
+}
+function key() { return `${$("dur").value}|${$("prof").value}|${$("temp").value}`; }
+function layout(extra) {
+  return Object.assign({
+    paper_bgcolor: css("--surface"), plot_bgcolor: css("--surface"), margin: {l: 52, r: 12, t: 8, b: 44},
+    font: {family: "system-ui, -apple-system, Segoe UI, sans-serif", size: 12, color: css("--ink2")},
+    xaxis: {gridcolor: css("--grid"), linecolor: css("--axis"), zeroline: false},
+    yaxis: {gridcolor: css("--grid"), linecolor: css("--axis"), zeroline: false},
+    legend: {orientation: "h", y: innerWidth < 600 ? -0.45 : -0.22, font: {size: 11}}, hovermode: "x unified"},
+    extra || {});
+}
+
+function init() {
+  fill($("dur"), DATA.durations.map(d => [d, `1 MW, ${d} h`]), 2);
+  fill($("prof"), Object.entries(DATA.profiles), "rce_opt");
+  fill($("temp"), DATA.temps.map(t => [t, `${t} °C`]), DATA.base_temp);
+  for (const id of ["dur", "prof", "temp"]) $(id).addEventListener("change", update);
+  $("strat").addEventListener("change", draw);
+  update();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+}
+
+function update() {
+  let c = DATA.cases[key()];
+  if (!c) {   // not every profile has every temperature: fall back to the base temperature
+    $("temp").value = DATA.base_temp; c = DATA.cases[key()];
+  }
+  const strategies = ORDER.filter(s => c.strategies[s] || (c.npv && c.npv[s]));
+  const best = Object.entries(c.npv || {}).sort((a, b) => b[1].npv - a[1].npv)[0];
+  const current = $("strat").value;
+  fill($("strat"), strategies.map(s => [s, DATA.strategies[s] || s]),
+       strategies.includes(current) ? current : (best ? best[0] : "none"));
+  draw();
+}
+
+function series(c, s) {
+  // a restricted-profile strategy keeps its path under the restricted profile's key
+  if (c.strategies[s]) return c.strategies[s];
+  const prof = s.replace("restrict_", "");
+  const other = DATA.cases[`${$("dur").value}|${prof}|${$("temp").value}`];
+  if (!other) return null;
+  const n = other.npv || {};
+  const pick = Object.keys(n).filter(k => k !== "none").sort((a, b) => n[b].npv - n[a].npv)[0];
+  return pick ? other.strategies[pick] : null;
+}
+
+function draw() {
+  const c = DATA.cases[key()];
+  const sel = $("strat").value;
+  const npv = c.npv || {};
+  const strategies = ORDER.filter(s => series(c, s));
+  // tiles
+  const ns = series(c, "none");
+  const firstShort = ns.end.findIndex(e => e < c.e_req * (1 - 1e-9));
+  const b = Object.entries(npv).sort((a, b) => b[1].npv - a[1].npv)[0];
+  $("tiles").innerHTML = [
+    ["Capacity obligation", `${fmt(c.obligation * 1000)} kW`, `${DATA.vintage}: KWD ${fmt(c.kwd * 100, 2)} % x ${fmt(c.p_net, 2)} MW net`],
+    ["Energy requirement", `${fmt(c.e_req, 2)} MWh`, `4 h at net achievable power; nominal ${fmt(c.e_op, 1)} MWh`],
+    ["No action: first year short", firstShort < 0 ? "never" : `year ${firstShort + 1}`, `SoH after ${DATA.years} years ${fmt(ns.soh[ns.soh.length - 1] * 100, 0)} %`],
+    ["Cheapest strategy", b ? (DATA.strategies[b[0]] || b[0]) : "not searched", b ? `NPV ${fmt(b[1].npv)} k PLN/MW` : "only the no-action path for this case"],
+  ].map(([k, v, s]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+  // energy
+  const tr = [];
+  for (const s of strategies) {
+    const d = series(c, s);
+    const x = [], y = [];
+    d.year.forEach((yr, i) => { x.push(yr - 1, yr); y.push(d.start[i], d.end[i]); });
+    tr.push({x, y, name: DATA.strategies[s] || s, mode: "lines",
+             line: {color: DATA.colors[s] || css("--muted"), width: s === sel ? 3 : 1.5},
+             opacity: s === sel ? 1 : 0.55, hovertemplate: "%{y:.2f} MWh"});
+  }
+  const band = c.bands && (c.bands[`${sel}|P90`] || c.bands[`${sel}|central`]);
+  if (band) {
+    const yrs = series(c, sel).year;
+    tr.unshift({x: yrs.concat([...yrs].reverse()), y: band.p95.concat([...band.p05].reverse()), fill: "toself",
+                fillcolor: "rgba(137,135,129,0.18)", line: {width: 0}, hoverinfo: "skip",
+                name: "ageing uncertainty, 5-95 %"});
+  }
+  tr.push({x: [0, DATA.years], y: [c.e_req, c.e_req], mode: "lines", name: "requirement",
+           line: {color: css("--ink"), width: 1.5, dash: "dash"}, hoverinfo: "skip"});
+  Plotly.react("energy", tr, layout({xaxis: {title: "contract year", gridcolor: css("--grid")},
+                                     yaxis: {title: "MWh", gridcolor: css("--grid")}}), {displayModeBar: false, responsive: true});
+  // npv bars
+  const rows = ORDER.filter(s => npv[s]).sort((a, b) => npv[a].npv - npv[b].npv);
+  if (rows.length) {
+    Plotly.react("npv", [{type: "bar", orientation: "h", y: rows.map(s => DATA.strategies[s] || s),
+      x: rows.map(s => npv[s].vs_best), marker: {color: rows.map(s => DATA.colors[s] || css("--muted")), cornerradius: 4,
+      line: {color: rows.map(s => s === sel ? css("--ink") : css("--surface")), width: rows.map(s => s === sel ? 2 : 1)}},
+      text: rows.map(s => fmt(npv[s].vs_best)), textposition: "outside", cliponaxis: false,
+      hovertemplate: "%{x:,.0f} k PLN<extra></extra>"}],
+      layout({margin: {l: 8, r: 16, t: 8, b: 44}, hovermode: "closest", yaxis: {automargin: true},
+              xaxis: {title: "k PLN per MW", gridcolor: css("--grid"), zeroline: true, zerolinecolor: css("--axis"),
+                      range: [Math.min(...rows.map(s => npv[s].vs_best)) * 1.22 - 1, 8]}}),
+      {displayModeBar: false, responsive: true});
+  } else {
+    Plotly.react("npv", [], layout({annotations: [{text: "strategies were searched for the base temperature only",
+      showarrow: false, x: 0.5, y: 0.5, xref: "paper", yref: "paper"}], xaxis: {visible: false}, yaxis: {visible: false}}),
+      {displayModeBar: false, responsive: true});
+  }
+  // soh
+  const sd = series(c, sel);
+  Plotly.react("soh", [
+    {x: [0].concat(sd.year), y: [100].concat(sd.soh.map(v => v * 100)), name: "initial modules", mode: "lines",
+     line: {color: DATA.colors[sel] || css("--muted"), width: 2}, hovertemplate: "%{y:.1f} %"},
+    {x: [0].concat(sd.year), y: [100].concat(sd.end.map(v => v / c.e_op * 100)), name: "available / nominal energy",
+     mode: "lines", line: {color: css("--ink2"), width: 1.5, dash: "dot"}, hovertemplate: "%{y:.1f} %"},
+    {x: [0, DATA.years], y: [c.e_req / c.e_op * 100, c.e_req / c.e_op * 100], name: "requirement", mode: "lines",
+     line: {color: css("--ink"), width: 1.5, dash: "dash"}, hoverinfo: "skip"}],
+    layout({xaxis: {title: "contract year", gridcolor: css("--grid")}, yaxis: {title: "%", gridcolor: css("--grid")}}),
+    {displayModeBar: false, responsive: true});
+  // cash flows
+  if (sd.cf) {
+    const parts = [["capacity_pln", "capacity payment", "#2a78d6"], ["arbitrage_pln", "arbitrage", "#1baf7a"],
+                   ["om_pln", "O&M", "#898781"], ["augment_pln", "augmentation", "#eb6834"],
+                   ["replace_pln", "module replacement", "#eda100"], ["penalty_pln", "penalty", "#e34948"]];
+    Plotly.react("cf", parts.filter(([k]) => sd.cf[k].some(v => Math.abs(v) > 0.05)).map(([k, n, col]) =>
+      ({type: "bar", x: sd.year, y: sd.cf[k], name: n, marker: {color: col}, hovertemplate: "%{y:,.0f} k PLN"})),
+      layout({barmode: "relative", bargap: 0.25, xaxis: {title: "contract year", gridcolor: css("--grid")},
+              yaxis: {title: "k PLN per MW", gridcolor: css("--grid")}}), {displayModeBar: false, responsive: true});
+  } else {
+    Plotly.react("cf", [], layout({annotations: [{text: "cash flows are computed for searched cases only",
+      showarrow: false, x: 0.5, y: 0.5, xref: "paper", yref: "paper"}], xaxis: {visible: false}, yaxis: {visible: false}}),
+      {displayModeBar: false, responsive: true});
+  }
+  // table
+  $("table").innerHTML = rows.length ? `<table><thead><tr><th>Strategy</th><th>Plan</th><th class="num">NPV, k PLN</th>
+    <th class="num">vs best</th><th class="num">Shortfall, MW-years</th><th class="num">Warranty broken in year</th></tr></thead><tbody>` +
+    [...rows].reverse().map(s => `<tr><td><span class="swatch" style="background:${DATA.colors[s] || "#898781"}"></span>${DATA.strategies[s] || s}</td>
+      <td>${npv[s].plan}</td><td class="num">${fmt(npv[s].npv)}</td><td class="num">${fmt(npv[s].vs_best)}</td>
+      <td class="num">${fmt(npv[s].short, 2)}</td><td class="num">${npv[s].warranty_break || "kept"}</td></tr>`).join("") +
+    "</tbody></table>" : "<p>Only the no-action path is computed for this combination.</p>";
+  $("note").textContent = "Perfect-foresight arbitrage revenue is an upper bound and is scaled by an assumed capture rate. " +
+    "Capacity-market rules, prices and costs are assumptions documented in config/assumptions.toml; they change often and " +
+    "must be verified. Real terms, contract years 1.." + DATA.years + ".";
+}
+init();
+</script>
+</body>
+</html>

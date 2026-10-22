@@ -1,0 +1,170 @@
+# Assumptions of the analysis. Values that come from public documents carry their source; values marked
+# ASSUMPTION are this project's choices. Capacity-market rules change often: every value below must be checked
+# against the current law and the current PSE documents before any use. Nothing here is legal or investment advice.
+
+[data]
+# RCE prices from the PSE API: the last twelve complete months, all with 15-minute prices (since 1.10.2025)
+start = "2025-10-01"
+end = "2026-09-30"
+
+[battery]
+power_mw = 1.0
+durations_h = [2.0, 4.0]   # batteries analysed (energy / power)
+rte = 0.87                # round-trip efficiency at the connection point, ASSUMPTION (LFP, incl. auxiliaries)
+
+# Operating profiles. "arbitrage": perfect-foresight RCE arbitrage per day (MILP); "reserves": synthetic profile.
+# durations: energy / power of the battery the profile is computed for (hours); profiles with a single duration
+# per battery use the revenue curve of their "parent" for years with less energy.
+[profiles.rce_opt]
+kind = "arbitrage"
+label = "RCE arbitrage, no cycle limit"
+durations = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
+wear_cost = 1.0            # PLN/MWh discharged, objective only (breaks ties)
+
+[profiles.rce_2c]
+kind = "arbitrage"
+label = "RCE arbitrage, max 2 cycles/day"
+durations = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
+max_cycles = 2.0
+
+[profiles.rce_1c]
+kind = "arbitrage"
+label = "RCE arbitrage, max 1 cycle/day"
+durations = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
+max_cycles = 1.0
+
+[profiles.rce_w10]
+kind = "arbitrage"
+label = "RCE arbitrage, SoC window 10-90 %"
+parent = "rce_opt"
+durations = [2.0, 4.0]
+window = [0.1, 0.9]
+
+[profiles.rce_w20]
+kind = "arbitrage"
+label = "RCE arbitrage, SoC window 20-80 %"
+parent = "rce_opt"
+durations = [2.0, 4.0]
+window = [0.2, 0.8]
+
+[profiles.reserves]
+kind = "reserves"
+label = "Mostly reserves (synthetic, shallow cycles)"
+durations = [2.0, 4.0]
+seed = 1
+# ASSUMPTION: activation = fast OU process (frequency containment) + slow OU process (restoration), fraction of P
+params = { fast_std = 0.08, fast_tau_min = 3.0, slow_std = 0.12, slow_tau_min = 30.0, soc_tau_h = 2.0 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Capacity market (rynek mocy). Sources, checked 22.10.2026 in the documents themselves unless marked (S):
+#   Ustawa z 8.12.2017 o rynku mocy, tekst jednolity Dz.U. 2025 poz. 610 (art. 2 ust. 1 pkt 19-20, art. 19, art. 25,
+#   art. 59, art. 67); Rozporzadzenie MKiS z 13.09.2024, Dz.U. 2024 poz. 1389 (call periods, penalty rate, secondary
+#   market); auction parameter regulations Dz.U. 2023 poz. 1561 (AG 2028), 2024 poz. 1154 (AG 2029), 2025 poz. 1066
+#   (AG 2030); results: URE 05.01.2024 (AG 2028, final), PSE 16.12.2024 (AG 2029, preliminary), URE Informacja
+#   1/2026 (AG 2030, final); PSE page "Okresy przywolania"; URE Informacja 71/2025 (penalty rate 2026).
+# Rules change often (no main auction is scheduled after the one for 2030). Verify before any use.
+# ---------------------------------------------------------------------------------------------------------------------
+[capacity_market]
+contract_years = 17        # new unit: 15 delivery periods (capex >= 2 400 PLN/kW net) + 2 for <= 450 kg CO2/MWh (art. 25 ust. 4-5)
+base_vintage = "ag2030"
+min_duration_h = 4.0       # net achievable power = power sustained for >= 4 consecutive hours (art. 2 ust. 1 pkt 19)
+# "four_hour_rule": keep the energy behind the certified net achievable power (E >= 4 h x P_net, P_net = min(P, E / 4 h));
+# "call": keep enough energy for the design call below. The 4 h reading for batteries is this project's interpretation.
+requirement = "four_hour_rule"
+secondary_cover = 1.0      # cost of shedding 1 MW-year of obligation on the secondary market, x clearing price (ASSUMPTION)
+penalty_pln_per_mwh = 6864.30   # SK 2026, URE Informacja 71/2025 (SK = 0.3 x GDP / electricity use, year n-2)
+penalty_cap_multiple = 2.0      # annual cap = 2 x obligation x clearing price (art. 59 ust. 4); monthly cap 1/5 of it
+# Call periods of 2026 (30.06 18-22 h, 04.08 17-19 h, 06.08 17-22 h) as the sum of the hourly alpha_SOM, i.e. MWh per
+# MW of obligation; 06.08.2026 (5 h) is the longest call so far and the design call.
+calls_mwh_per_mw = [3.38, 1.46, 4.21]
+design_call_mwh_per_mw = 4.21
+
+# One KWD for all batteries, whatever their duration (no split by 1/2/4 h in any of the regulations).
+[capacity_market.vintages.ag2028]
+label = "AG 2028"
+first_delivery_year = 2028
+kwd = 0.95                 # Dz.U. 2023 poz. 1561 par. 10
+price_pln_per_kw_year = 244.90
+
+[capacity_market.vintages.ag2029]
+label = "AG 2029"
+first_delivery_year = 2029
+kwd = 0.613                # Dz.U. 2024 poz. 1154 par. 10 pkt 9
+price_pln_per_kw_year = 264.90
+
+[capacity_market.vintages.ag2030]
+label = "AG 2030"
+first_delivery_year = 2030
+kwd = 0.1339               # Dz.U. 2025 poz. 1066 par. 10 pkt 9 (one group with pumped hydro)
+price_pln_per_kw_year = 465.02
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Costs (real; USD converted at the NBP average rate of 2025)
+# ---------------------------------------------------------------------------------------------------------------------
+[costs]
+fx_usd_pln = 3.7588        # NBP table A, average of the 251 mid-rates of 2025
+base_year = 2024
+# IRENA, Renewable Power Generation Costs in 2024 (July 2025): utility-scale BESS total installed cost 192 USD/kWh in
+# 2024. Split into energy and power parts with the structure of Cole, Ramasamy, Turan, NREL/TP-6A40-93281 (2025),
+# 241 USD/kWh + 372 USD/kW for a 4 h system (28 % of a 4 h system is power-related):
+# 192 USD/kWh x 4 h = 768 USD/kW = 138 USD/kWh x 4 h + 215 USD/kW.
+energy_usd_per_kwh = 138.0
+power_usd_per_kw = 215.0
+decline_base = "mid"
+augment_premium = 0.10     # ASSUMPTION; no public figure (Lazard LCOS v10.0 prices augmentation at module cost, no premium)
+augment_fixed_pln_per_mw = 20000.0    # ASSUMPTION: engineering, mobilisation, commissioning, capacity test per event
+module_share = 0.5         # modules as a share of the energy-related cost: BNEF stationary pack 70 USD/kWh in 2025 (S, press release 09.12.2025)
+replace_extra_usd_per_kwh = 15.0      # ASSUMPTION: removal, transport, recycling and labour per kWh replaced
+replace_fixed_pln_per_mw = 20000.0    # ASSUMPTION, as for augmentation
+om_usd_per_kwh_year = 3.0  # Lazard LCOS v10.0 (June 2025): storage O&M 3.0-8.0 USD/kWh-yr, low end (augmentation modelled separately)
+om_usd_per_kw_year = 0.0
+
+# Price paths of a 4 h system, normalised to 2024: Cole et al. 2025, Table 2 (low / mid / high cost cases)
+[costs.decline]
+mid = [[2024, 1.0], [2025, 0.96], [2030, 0.84], [2035, 0.73], [2040, 0.66], [2050, 0.53]]
+fast = [[2024, 1.0], [2025, 0.88], [2030, 0.62], [2035, 0.44], [2040, 0.40], [2050, 0.32]]
+slow = [[2024, 1.0], [2025, 1.05], [2030, 1.06], [2035, 1.02], [2040, 0.98], [2050, 0.92]]
+
+[economics]
+discount_rate = 0.06       # real, ASSUMPTION
+discount_rates = [0.04, 0.06, 0.08, 0.10]
+arbitrage_capture = 0.8    # share of the perfect-foresight arbitrage revenue earned in practice, ASSUMPTION
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Generalised manufacturer warranty (detailed schedules are usually confidential). Sources: Tesla Megapack 2 XL
+# datasheet (15 years standard, extendable to 20, energy retention); Tesla 10-K 2019 (retention "up to 80 %",
+# throughput caps); DNV, "Energy storage capacity warranties: beyond the fine print" (2021): about one full cycle a
+# day, average SoC below 50 %, 0.25C-1C, about 25 degC cell temperature; Volta Battery Report 2025 via ESS News (S):
+# 60-70 % SoH guarantees on one cycle a day.
+# ---------------------------------------------------------------------------------------------------------------------
+[warranty]
+years = 15
+fec_per_year = 365
+fec_total = 5475
+retention = 0.70
+max_temp_c = 25.0
+max_c_rate = 0.5
+max_mean_soc = 0.5
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Analysis
+# ---------------------------------------------------------------------------------------------------------------------
+[analysis]
+temp_c = 25.0                          # base cell temperature (container HVAC)
+temperatures_c = [20.0, 25.0, 30.0, 35.0]
+base_profile = "rce_opt"
+strategy_profiles = ["rce_opt", "rce_2c", "rce_1c", "rce_w10", "rce_w20", "reserves"]
+restricted_profiles = ["rce_2c", "rce_1c", "rce_w10", "rce_w20"]   # strategy (c) for the base profile
+bol_margins = [0.0, 0.1, 0.2, 0.3]     # initial energy above nominal for the compliance-year table
+max_events = 3                         # augmentations searched
+max_replacements = 2
+fixed_augment_years = [6, 12]          # strategy (b) with fixed years
+steps_per_year = 2
+
+[risk]
+samples = 500
+temp_sd_c = 2.0            # ASSUMPTION: spread of the mean cell temperature around the design value
+seed = 1
+quantiles = [0.9, 0.95]
+profiles = ["rce_opt", "rce_1c", "reserves"]
+strategies = ["overbuild", "augment_opt"]
