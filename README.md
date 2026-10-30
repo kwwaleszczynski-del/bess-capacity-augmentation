@@ -318,7 +318,7 @@ charts and reruns the risk step from the cached analysis. All assumptions are in
 
 ```
 src/bess_augment/
-  pse_api.py       RCE download and cache
+  pse_api.py       RCE through pse-opendata (monthly Parquet cache)
   dispatch.py      daily arbitrage MILP, synthetic reserve profile
   rainflow.py      rainflow cycle counting
   aging.py         ageing model, profile stress, fit to the cell data

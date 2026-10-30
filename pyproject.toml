@@ -7,7 +7,7 @@ name = "bess-capacity-augmentation"
 version = "0.1.0"
 description = "When does an ageing battery stop meeting its Polish capacity-market obligation, and what is the cheapest way to keep it: overbuild, augmentation, restricted operation or module replacement (LFP ageing model fitted to open cell data, arbitrage on PSE RCE prices)."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Konrad Waleszczyński" }]
 dependencies = [
@@ -15,7 +15,7 @@ dependencies = [
     "pandas>=2.1",
     "pyarrow>=14",
     "scipy>=1.11",
-    "requests>=2.31",
+    "pse-opendata>=0.2,<0.3",
     "plotly>=5.20",
     "kaleido>=0.2",
     "tomli>=2.0; python_version < '3.11'",
