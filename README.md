@@ -228,7 +228,7 @@ Schmalstieg et al. 2014 and Naumann et al. 2018/2020 with the rainflow stress of
 change, each term is accumulated in virtual time, which is exact for a power law: $`Q^{1/z}`$ grows at the rate
 $`k^{1/z}`$.
 
-The parameters are fitted to twelve 180 Ah LFP cells for stationary storage aged for up to 870 days (Yagci et al.
+The parameters are fitted to twelve 180 Ah LFP cells for stationary storage aged for up to 873 days (Yagci et al.
 2025): eight stored at 75 % and 100 % SoC at 35 and 50 degC give the calendar term, four cycled at full depth in
 35 and 50 degC chambers the cycle term after subtracting the fitted calendar ageing. The fit is reproduced by
 `python -m bess_augment fit` from the checkup capacities shipped in `src/bess_augment/resources` (derived from the
