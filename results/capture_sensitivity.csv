@@ -1,0 +1,73 @@
+capture_rate,duration_h,strategy,plan,pv_arbitrage,npv,npv_vs_augment_opt,npv_vs_best
+0.45,2,none,BOL 2.00 MWh,1.80041e+06,122612,19470.5,0
+0.45,2,overbuild,BOL 3.00 MWh,2.1201e+06,-63006.9,-166148,-185619
+0.45,2,augment_fix,"BOL 2.32 MWh, y6: +0.32 MWh, y12: +0.34 MWh",2.1201e+06,96240.6,-6900.91,-26371.4
+0.45,2,augment_opt,"BOL 2.32 MWh, y6: +0.21 MWh, y10: +0.22 MWh, y14: +0.23 MWh",2.1201e+06,103141,0,-19470.5
+0.45,2,replace_opt,"BOL 2.71 MWh, y13: replace 16%, y15: replace 26%",2.1201e+06,-20961.6,-124103,-143574
+0.45,4,none,BOL 4.00 MWh,3.02281e+06,493577,203554,0
+0.45,4,overbuild,BOL 5.63 MWh,3.35126e+06,7761.27,-282262,-485816
+0.45,4,augment_fix,"BOL 4.56 MWh, y6: +0.51 MWh, y12: +0.52 MWh",3.35126e+06,272041,-17981.9,-221536
+0.45,4,augment_opt,"BOL 4.47 MWh, y5: +0.34 MWh, y9: +0.34 MWh, y13: +0.43 MWh",3.35126e+06,290023,0,-203554
+0.45,4,replace_opt,"BOL 5.26 MWh, y14: replace 15%, y16: replace 16%",3.35126e+06,56131,-233892,-437446
+0.45,2,restrict_rce_2c,"augment_opt under rce_2c: BOL 2.31 MWh, y6: +0.20 MWh, y10: +0.21 MWh, y14: +0.22 MWh",2.11538e+06,110445,7303.75,-12166.8
+0.45,4,restrict_rce_2c,"augment_opt under rce_2c: BOL 4.47 MWh, y5: +0.34 MWh, y9: +0.34 MWh, y13: +0.43 MWh",3.35123e+06,289998,-25.3824,-203579
+0.45,2,restrict_rce_1c,"augment_opt under rce_1c: BOL 2.28 MWh, y7: +0.17 MWh, y12: +0.20 MWh",1.81251e+06,-91460.3,-194602,-214072
+0.45,4,restrict_rce_1c,"augment_opt under rce_1c: BOL 4.41 MWh, y5: +0.28 MWh, y9: +0.26 MWh, y13: +0.33 MWh",3.15549e+06,195278,-94745.4,-298299
+0.45,2,restrict_rce_w10,"augment_opt under rce_w10: BOL 2.30 MWh, y6: +0.18 MWh, y10: +0.19 MWh, y14: +0.19 MWh",1.77891e+06,-199568,-302710,-322180
+0.45,4,restrict_rce_w10,"augment_opt under rce_w10: BOL 4.45 MWh, y5: +0.32 MWh, y9: +0.31 MWh, y13: +0.40 MWh",2.93469e+06,-88923.7,-378947,-582501
+0.45,2,restrict_rce_w20,"augment_opt under rce_w20: BOL 2.27 MWh, y6: +0.16 MWh, y10: +0.16 MWh, y14: +0.16 MWh",1.39891e+06,-539420,-642562,-662032
+0.45,4,restrict_rce_w20,"augment_opt under rce_w20: BOL 4.42 MWh, y5: +0.28 MWh, y9: +0.27 MWh, y13: +0.35 MWh",2.42652e+06,-544584,-834607,-1.03816e+06
+0.6,2,none,BOL 2.00 MWh,2.40054e+06,722747,-87095.3,-92825.4
+0.6,2,overbuild,BOL 3.00 MWh,2.8268e+06,643694,-166148,-171879
+0.6,2,augment_fix,"BOL 2.32 MWh, y6: +0.32 MWh, y12: +0.34 MWh",2.8268e+06,802942,-6900.91,-12631
+0.6,2,augment_opt,"BOL 2.32 MWh, y6: +0.21 MWh, y10: +0.22 MWh, y14: +0.23 MWh",2.8268e+06,809842,0,-5730.11
+0.6,2,replace_opt,"BOL 2.71 MWh, y13: replace 16%, y15: replace 26%",2.8268e+06,685739,-124103,-129833
+0.6,4,none,BOL 4.00 MWh,4.03041e+06,1.50118e+06,94069.8,0
+0.6,4,overbuild,BOL 5.63 MWh,4.46834e+06,1.12485e+06,-282262,-376332
+0.6,4,augment_fix,"BOL 4.56 MWh, y6: +0.51 MWh, y12: +0.52 MWh",4.46834e+06,1.38913e+06,-17981.9,-112052
+0.6,4,augment_opt,"BOL 4.47 MWh, y5: +0.34 MWh, y9: +0.34 MWh, y13: +0.43 MWh",4.46834e+06,1.40711e+06,0,-94069.8
+0.6,4,replace_opt,"BOL 5.26 MWh, y14: replace 15%, y16: replace 16%",4.46834e+06,1.17322e+06,-233892,-327962
+0.6,2,restrict_rce_2c,"augment_opt under rce_2c: BOL 2.31 MWh, y6: +0.20 MWh, y10: +0.21 MWh, y14: +0.22 MWh",2.82051e+06,815573,5730.11,0
+0.6,4,restrict_rce_2c,"augment_opt under rce_2c: BOL 4.47 MWh, y5: +0.34 MWh, y9: +0.34 MWh, y13: +0.43 MWh",4.46831e+06,1.40708e+06,-33.8432,-94103.7
+0.6,2,restrict_rce_1c,"augment_opt under rce_1c: BOL 2.28 MWh, y7: +0.17 MWh, y12: +0.20 MWh",2.41669e+06,512711,-297131,-302862
+0.6,4,restrict_rce_1c,"augment_opt under rce_1c: BOL 4.41 MWh, y5: +0.28 MWh, y9: +0.26 MWh, y13: +0.33 MWh",4.20732e+06,1.24711e+06,-160001,-254071
+0.6,2,restrict_rce_w10,"augment_opt under rce_w10: BOL 2.30 MWh, y6: +0.18 MWh, y10: +0.19 MWh, y14: +0.19 MWh",2.37189e+06,393403,-416439,-422169
+0.6,4,restrict_rce_w10,"augment_opt under rce_w10: BOL 4.45 MWh, y5: +0.32 MWh, y9: +0.31 MWh, y13: +0.40 MWh",3.91292e+06,889306,-517803,-611873
+0.6,2,restrict_rce_w20,"augment_opt under rce_w20: BOL 2.27 MWh, y6: +0.16 MWh, y10: +0.16 MWh, y14: +0.16 MWh",1.86521e+06,-73117.7,-882960,-888690
+0.6,4,restrict_rce_w20,"augment_opt under rce_w20: BOL 4.42 MWh, y5: +0.28 MWh, y9: +0.27 MWh, y13: +0.35 MWh",3.23536e+06,264257,-1.14285e+06,-1.23692e+06
+0.8,2,none,BOL 2.00 MWh,3.20072e+06,1.52293e+06,-229183,-232815
+0.8,2,overbuild,BOL 3.00 MWh,3.76907e+06,1.58596e+06,-166148,-169780
+0.8,2,augment_fix,"BOL 2.32 MWh, y6: +0.32 MWh, y12: +0.34 MWh",3.76907e+06,1.74521e+06,-6900.91,-10532.8
+0.8,2,augment_opt,"BOL 2.32 MWh, y6: +0.21 MWh, y10: +0.22 MWh, y14: +0.23 MWh",3.76907e+06,1.75211e+06,0,-3631.93
+0.8,2,replace_opt,"BOL 2.71 MWh, y13: replace 16%, y15: replace 26%",3.76907e+06,1.62801e+06,-124103,-127735
+0.8,4,none,BOL 4.00 MWh,5.37388e+06,2.84465e+06,-51908.8,-51908.8
+0.8,4,overbuild,BOL 5.63 MWh,5.95779e+06,2.6143e+06,-282262,-282262
+0.8,4,augment_fix,"BOL 4.56 MWh, y6: +0.51 MWh, y12: +0.52 MWh",5.95779e+06,2.87858e+06,-17981.9,-17981.9
+0.8,4,augment_opt,"BOL 4.47 MWh, y5: +0.34 MWh, y9: +0.34 MWh, y13: +0.43 MWh",5.95779e+06,2.89656e+06,0,0
+0.8,4,replace_opt,"BOL 5.26 MWh, y14: replace 15%, y16: replace 16%",5.95779e+06,2.66267e+06,-233892,-233892
+0.8,2,restrict_rce_2c,"augment_opt under rce_2c: BOL 2.31 MWh, y6: +0.20 MWh, y10: +0.21 MWh, y14: +0.22 MWh",3.76068e+06,1.75574e+06,3631.93,0
+0.8,4,restrict_rce_2c,"augment_opt under rce_2c: BOL 4.47 MWh, y5: +0.34 MWh, y9: +0.34 MWh, y13: +0.43 MWh",5.95775e+06,2.89651e+06,-45.1243,-45.1243
+0.8,2,restrict_rce_1c,"augment_opt under rce_1c: BOL 2.28 MWh, y7: +0.17 MWh, y12: +0.20 MWh",3.22225e+06,1.31827e+06,-433838,-437469
+0.8,4,restrict_rce_1c,"augment_opt under rce_1c: BOL 4.41 MWh, y5: +0.28 MWh, y9: +0.26 MWh, y13: +0.33 MWh",5.60976e+06,2.64955e+06,-247008,-247008
+0.8,2,restrict_rce_w10,"augment_opt under rce_w10: BOL 2.30 MWh, y6: +0.18 MWh, y10: +0.19 MWh, y14: +0.19 MWh",3.16251e+06,1.18403e+06,-568079,-571710
+0.8,4,restrict_rce_w10,"augment_opt under rce_w10: BOL 4.45 MWh, y5: +0.32 MWh, y9: +0.31 MWh, y13: +0.40 MWh",5.21723e+06,2.19361e+06,-702944,-702944
+0.8,2,restrict_rce_w20,"augment_opt under rce_w20: BOL 2.27 MWh, y6: +0.16 MWh, y10: +0.16 MWh, y14: +0.16 MWh",2.48695e+06,548619,-1.20349e+06,-1.20712e+06
+0.8,4,restrict_rce_w20,"augment_opt under rce_w20: BOL 4.42 MWh, y5: +0.28 MWh, y9: +0.27 MWh, y13: +0.35 MWh",4.31382e+06,1.34271e+06,-1.55385e+06,-1.55385e+06
+1,2,none,BOL 2.00 MWh,4.0009e+06,2.32311e+06,-371271,-372804
+1,2,overbuild,BOL 3.00 MWh,4.71134e+06,2.52823e+06,-166148,-167682
+1,2,augment_fix,"BOL 2.32 MWh, y6: +0.32 MWh, y12: +0.34 MWh",4.71134e+06,2.68748e+06,-6900.91,-8434.66
+1,2,augment_opt,"BOL 2.32 MWh, y6: +0.21 MWh, y10: +0.22 MWh, y14: +0.23 MWh",4.71134e+06,2.69438e+06,0,-1533.75
+1,2,replace_opt,"BOL 2.71 MWh, y13: replace 16%, y15: replace 26%",4.71134e+06,2.57028e+06,-124103,-125637
+1,4,none,BOL 4.00 MWh,6.71735e+06,4.18812e+06,-197887,-197887
+1,4,overbuild,BOL 5.63 MWh,7.44724e+06,4.10374e+06,-282262,-282262
+1,4,augment_fix,"BOL 4.56 MWh, y6: +0.51 MWh, y12: +0.52 MWh",7.44724e+06,4.36802e+06,-17981.9,-17981.9
+1,4,augment_opt,"BOL 4.47 MWh, y5: +0.34 MWh, y9: +0.34 MWh, y13: +0.43 MWh",7.44724e+06,4.38601e+06,0,0
+1,4,replace_opt,"BOL 5.26 MWh, y14: replace 15%, y16: replace 16%",7.44724e+06,4.15211e+06,-233892,-233892
+1,2,restrict_rce_2c,"augment_opt under rce_2c: BOL 2.31 MWh, y6: +0.20 MWh, y10: +0.21 MWh, y14: +0.22 MWh",4.70085e+06,2.69591e+06,1533.75,0
+1,4,restrict_rce_2c,"augment_opt under rce_2c: BOL 4.47 MWh, y5: +0.34 MWh, y9: +0.34 MWh, y13: +0.43 MWh",7.44718e+06,4.38595e+06,-56.4054,-56.4054
+1,2,restrict_rce_1c,"augment_opt under rce_1c: BOL 2.28 MWh, y7: +0.17 MWh, y12: +0.20 MWh",4.02781e+06,2.12383e+06,-570544,-572077
+1,4,restrict_rce_1c,"augment_opt under rce_1c: BOL 4.41 MWh, y5: +0.28 MWh, y9: +0.26 MWh, y13: +0.33 MWh",7.01221e+06,4.05199e+06,-334015,-334015
+1,2,restrict_rce_w10,"augment_opt under rce_w10: BOL 2.30 MWh, y6: +0.18 MWh, y10: +0.19 MWh, y14: +0.19 MWh",3.95314e+06,1.97466e+06,-719718,-721251
+1,4,restrict_rce_w10,"augment_opt under rce_w10: BOL 4.45 MWh, y5: +0.32 MWh, y9: +0.31 MWh, y13: +0.40 MWh",6.52153e+06,3.49792e+06,-888086,-888086
+1,2,restrict_rce_w20,"augment_opt under rce_w20: BOL 2.27 MWh, y6: +0.16 MWh, y10: +0.16 MWh, y14: +0.16 MWh",3.10868e+06,1.17036e+06,-1.52402e+06,-1.52556e+06
+1,4,restrict_rce_w20,"augment_opt under rce_w20: BOL 4.42 MWh, y5: +0.28 MWh, y9: +0.27 MWh, y13: +0.35 MWh",5.39227e+06,2.42116e+06,-1.96484e+06,-1.96484e+06

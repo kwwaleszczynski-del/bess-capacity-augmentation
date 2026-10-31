@@ -273,6 +273,29 @@ def add_restrict(cfg: dict, strat: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def capture_sensitivity(cfg: dict, strat: pd.DataFrame) -> pd.DataFrame:
+    """Every strategy of the base profile (base case and temperature) at the capture rates of
+    ``cfg['economics']['capture_rates']``. Arbitrage revenue is the only cash flow proportional to the capture rate,
+    so NPV(c) = NPV(c0) + (c / c0 - 1) PV_arbitrage(c0). Each strategy keeps the plan chosen at the base rate c0:
+    a compliant plan of a battery of up to 4 h always has its operating energy available (the requirement), so all
+    compliant plans of a profile earn the same revenue and their ranking does not depend on the rate."""
+    a, e = cfg["analysis"], cfg["economics"]
+    s = strat[(strat["profile"] == a["base_profile"]) & (strat["temp_c"] == a["temp_c"])
+              & (strat["scenario"] == "base")]
+    parts = []
+    for c in e["capture_rates"]:
+        f = c / e["arbitrage_capture"]
+        parts.append(pd.DataFrame({"capture_rate": c, "duration_h": s["duration_h"], "strategy": s["strategy"],
+                                   "plan": s["plan"], "pv_arbitrage": s["pv_arbitrage"] * f,
+                                   "npv": s["npv"] + (f - 1) * s["pv_arbitrage"]}))
+    out = pd.concat(parts, ignore_index=True)
+    keys = [out["capture_rate"], out["duration_h"]]
+    aug = out["npv"].where(out["strategy"] == "augment_opt")
+    out["npv_vs_augment_opt"] = out["npv"] - aug.groupby(keys).transform("max")
+    out["npv_vs_best"] = out["npv"] - out["npv"].groupby(keys).transform("max")
+    return out
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Risk, warranty
 # ---------------------------------------------------------------------------------------------------------------------

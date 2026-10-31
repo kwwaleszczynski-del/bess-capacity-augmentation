@@ -85,6 +85,8 @@ def cmd_run(args, cfg):
     res["strategies"].to_csv(r / "strategies.csv", index=False, float_format="%.6g")
     res["paths"].to_csv(r / "strategy_paths.csv", index=False, float_format="%.6g")
     res["schedule_grid"].to_csv(r / "schedule_grid.csv", index=False, float_format="%.6g")
+    pipeline.capture_sensitivity(cfg, res["strategies"]).to_csv(r / "capture_sensitivity.csv", index=False,
+                                                                float_format="%.6g")
     curves = {k: pipeline.curve_for(cfg, profiles, *k) for k in profiles}
     risk, bands = pipeline.risk(cfg, fit, st, res["plans"], curves)
     risk.to_csv(r / "risk.csv", index=False, float_format="%.5g")

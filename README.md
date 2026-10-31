@@ -22,9 +22,12 @@ discount rate 6 %, NREL mid battery-price path, NPV per MW of power in thousands
 requirement is the four-hour rule: the energy behind the certified net achievable power, which for a battery of up
 to 4 h is its nominal energy.
 
-**1. Without headroom the battery falls short in its first year; headroom only buys time.** The available energy
-of the initial modules after 17 contract years and the first year it is below the requirement for an initial
-energy 10, 20 or 30 % above nominal:
+**1. Without headroom the battery falls short in its first year; headroom only buys time.** Short means below the
+four-hour requirement, which is this project's reading of the rules for batteries (to be verified). Against the
+energy the longest call so far needed, a battery with an AG 2030 contract is never short, whatever its profile and
+temperature (result 2), and the model prices a shortfall as the lost capacity payment of the missing share, not as
+a penalty. The available energy of the initial modules after 17 contract years and the first year it is below the
+requirement for an initial energy 10, 20 or 30 % above nominal:
 
 | Operating profile | Cycles/day (2 h / 4 h) | Arbitrage revenue, k PLN/MW-yr (2 h / 4 h) | SoH after 17 years (2 h / 4 h) | First year short at +10 / +20 / +30 %, 2 h | same, 4 h |
 |---|---|---|---|---|---|
@@ -35,9 +38,10 @@ energy 10, 20 or 30 % above nominal:
 | SoC window 20-80 % | 1.24 / 1.02 | 297 / 515 | 70 % / 73 % | 4 / 9 / 14 | 4 / 10 / 15 |
 | mostly reserves (synthetic) | 0.60 / 0.30 | not modelled | 79 % / 83 % | 5 / 13 / never | 7 / 17 / never |
 
-Revenue is the perfect-foresight value; the NPV uses 80 % of it. The revenue-maximising schedule cycles 1.8 times a
-day; a cap at two cycles costs it 0.2 % of the revenue (2 h) and nothing for 4 h, a cap at one cycle 15 % and 6 %.
-Calendar ageing alone takes 3.1 % in the first year and 13 % in 17 years at 25 degC, the floor every profile pays.
+Revenue is the perfect-foresight value; the NPV uses 80 % of it (45-100 % in result 5). The revenue-maximising
+schedule cycles 1.8 times a day; a cap at two cycles costs it 0.2 % of the revenue (2 h) and nothing for 4 h, a cap
+at one cycle 15 % and 6 %. Calendar ageing alone takes 3.1 % in the first year and 13 % in 17 years at 25 degC, the
+floor every profile pays.
 
 ![available energy by profile](docs/img/soh_profiles.png)
 ![revenue against cycling](docs/img/revenue_tradeoff.png)
@@ -52,8 +56,9 @@ The penalties at stake are small, though: in a year with the three calls of 2026
 costs an AG 2028 battery of 2 h without headroom 6.6 % of its capacity payment at the end of the contract, because
 calls are rare and short. What makes headroom worth having is mostly the arbitrage revenue the energy earns.
 
-**3. Optimised augmentation is the cheapest way to stay compliant; overbuild costs 166-282 k PLN per MW more.**
-Revenue-maximising arbitrage at 25 degC, every strategy compared with the optimised augmentation:
+**3. Optimised augmentation, with or without a cap at two cycles a day, is the cheapest way to stay compliant;
+overbuild costs 166-282 k PLN per MW more.** Revenue-maximising arbitrage at 25 degC, every strategy compared with
+the optimised augmentation:
 
 | Strategy | 2 h: plan | 2 h: NPV vs (b) opt. | 4 h: plan | 4 h: NPV vs (b) opt. |
 |---|---|---|---|---|
@@ -68,10 +73,12 @@ Revenue-maximising arbitrage at 25 degC, every strategy compared with the optimi
 
 Augmentation buys about as much energy as overbuild in total (2.97 vs 3.00 MWh for 2 h), but later, when it is
 cheaper and discounted, and the added modules start young. Replacing modules needs no extra space, but every kWh
-bought only gains the difference to the old module's state of health. Restricting operation slows the ageing but
-gives up more revenue than the augmentation it saves. A fourth augmentation adds nothing (2 h) or 5 k PLN (4 h).
-For a 4 h battery under AG 2030, doing nothing is only 52 k PLN worse: the obligation is small, and a 4 h battery
-that has faded to 2.7 MWh still earns 79 % of the arbitrage revenue of a full one (89 % on average over the contract).
+bought only gains the difference to the old module's state of health. A cap at two cycles a day gives up 0.2 % of
+the revenue of a 2 h battery and saves slightly more in augmentation (+4 k PLN, a tie at this precision); tighter
+restrictions slow the ageing but give up more revenue than the augmentation they save. A fourth augmentation adds
+nothing (2 h) or 5 k PLN (4 h). For a 4 h battery under AG 2030, doing nothing is only 52 k PLN worse: the obligation
+is small, and a 4 h battery that has faded to 2.7 MWh still earns 79 % of the arbitrage revenue of a full one (89 %
+on average over the contract). With a capture rate of 60 % or less, doing nothing comes out ahead (result 5).
 
 ![energy by strategy](docs/img/strategy_energy.png)
 ![NPV by strategy](docs/img/npv_strategies.png)
@@ -88,18 +95,54 @@ optimistic bound.
 
 ![risk](docs/img/risk_bands.png)
 
-**5. Sensitivity.** The optimised augmentation stays the cheapest strategy for the revenue-maximising profile in
-every case below, except for a 4 h battery with flat battery prices (high-cost path: no action is 111 k PLN better)
-or a discount rate of 8-10 % (8 and 54 k PLN). Its advantage over overbuild grows with temperature, from 114 k PLN
-(20 degC) to 346 k PLN (35 degC) for 2 h and from 201 to 556 k PLN for 4 h: at 35 degC the SoH of a 2 h battery
-after 17 years falls to 43 % (69 % at 20 degC). The price path matters less than expected (159 k PLN with the
-low-cost path, 167 k PLN with the high-cost path, 2 h), because it lowers the price of the initial build as well. A
-higher discount rate favours augmentation (209 k PLN at 10 %), the vintage barely changes it (176 k PLN for AG 2028).
-For the reserve profile, whose revenue is not modelled, no action is the cheapest, as compliance then only protects
-a small capacity payment.
+**5. Sensitivity.** For the revenue-maximising profile the optimised augmentation stays ahead of overbuild, module
+replacement and no action in every case below ((c) is evaluated in the base case only), except for a 4 h battery
+with flat battery prices (high-cost path: no action is 111 k PLN better), a discount rate of 8-10 % (8 and 54 k PLN)
+or a low capture rate (see below). Its advantage over overbuild grows with temperature, from 114 k PLN (20 degC) to
+346 k PLN (35 degC) for 2 h and from 201 to 556 k PLN for 4 h: at 35 degC the SoH of a 2 h battery after 17 years
+falls to 43 % (69 % at 20 degC). The price path matters less than expected (159 k PLN with the low-cost path,
+167 k PLN with the high-cost path, 2 h), because it lowers the price of the initial build as well. A higher discount
+rate favours augmentation (209 k PLN at 10 %), the vintage barely changes it (176 k PLN for AG 2028). For the
+reserve profile, whose revenue is not modelled, no action is the cheapest, as compliance then only protects a small
+capacity payment.
 
 ![sensitivity](docs/img/sensitivity.png)
 ![temperature](docs/img/soh_temperature.png)
+
+**Capture rate.** The NPV assumes the battery earns 80 % of the perfect-foresight arbitrage revenue. Two companion
+projects bracket that number. The median of the 40 grid batteries of 20 MW or more with a full year of data in
+Australia's NEM earned 45 % of the perfect-foresight energy revenue for the capacity it offered from October 2025
+to September 2026 (38 % against its registered capacity;
+[nem-battery-behaviour](https://github.com/kwwaleszczynski-del/nem-battery-behaviour)). A 1 MW / 2 MWh battery
+that plans each day on its own price forecast before the day-ahead gate closure earned 83 % of perfect foresight in
+a walk-forward backtest of 865 days on Polish day-ahead (SDAC) prices, not the RCE prices used here (80 % since the
+switch to 15-minute products; [pl-bess-paper-trading](https://github.com/kwwaleszczynski-del/pl-bess-paper-trading)).
+The two numbers measure different things. The NEM figure is what real operators earned on the capacity they
+offered, in a five-minute market whose revenue sits in rare price spikes that are expensive to miss: they cycled
+less than the benchmark and, the larger part, traded at worse times, partly because they hold energy back against
+spikes and for hedge contracts that are not in the public data. The 83 % is one strategy optimised for one auction:
+a day-ahead schedule only has to rank the next day's quarter-hours, and the backtest settles it as a price-taker at
+the clearing prices of that auction, without imbalance, fees or outages. The 80 % of the base case is close to what
+such a strategy reaches on paper; a real asset with outages, fees and imbalance earns less, and the NEM median shows
+how far real operation can fall below it. NPV in k PLN per MW (2 h / 4 h), base case otherwise:
+
+| Capture rate | NPV of (b) optimised | No action vs (b) | (c) max 2 cycles/day vs (b) | (c) max 1 cycle/day vs (b) | (a) overbuild vs (b) | Highest NPV |
+|---|---|---|---|---|---|---|
+| 45 % | 103 / 290 | +19 / +204 | +7 / 0 | -195 / -95 | -166 / -282 | no action / no action |
+| 60 % | 810 / 1 407 | -87 / +94 | +6 / 0 | -297 / -160 | -166 / -282 | (c) max 2 cycles/day / no action |
+| 80 % (base) | 1 752 / 2 897 | -229 / -52 | +4 / 0 | -434 / -247 | -166 / -282 | (c) max 2 cycles/day / (b) optimised |
+| 100 % | 2 694 / 4 386 | -371 / -198 | +2 / 0 | -571 / -334 | -166 / -282 | (c) max 2 cycles/day / (b) optimised |
+
+Arbitrage revenue is the only cash flow that scales with the capture rate, and every compliant plan keeps its
+nominal energy available and earns the full revenue of its profile, so the gaps between overbuild, augmentation and
+module replacement do not move. What moves is the value of the energy itself: at 45 % the NPV of the optimised
+augmentation falls to 103 k PLN (2 h) and 290 k PLN (4 h), a cap at one cycle a day gives up less, and no action has
+the highest NPV for both durations, for 4 h already at 60 %. Below a capture rate between 45 and 60 % (2 h) or
+between 60 and 80 % (4 h), letting the battery fade and shedding the missing share of its obligation pays more than
+staying compliant, provided the shortfall can be shed at the clearing price as this model assumes (to be verified
+against the secondary-market rules and their liquidity). Among the ways to stay compliant, the optimised
+augmentation (with or without a cap at two cycles a day) stays first at every rate; only a cap at one cycle a day
+moves up, for 4 h ahead of module replacement and overbuild at 60 % and below.
 
 **6. The revenue-maximising strategy breaks a typical warranty in its first year.** Against a generalised warranty
 of 15 years with 365 equivalent full cycles a year (5 475 in total), an average SoC of at most 50 % and about 25 degC:
@@ -120,8 +163,8 @@ from public material (see Method).
 ![warranty](docs/img/warranty.png)
 
 All numbers are in `results/`: `profiles.csv`, `compliance_years.csv`, `call_exposure.csv`, `strategies.csv`
-(every strategy, profile, temperature and scenario), `strategy_paths.csv`, `schedule_grid.csv`, `risk.csv`,
-`warranty.csv`, `aging_fit.json`.
+(every strategy, profile, temperature and scenario), `capture_sensitivity.csv`, `strategy_paths.csv`,
+`schedule_grid.csv`, `risk.csv`, `warranty.csv`, `aging_fit.json`.
 
 ## Capacity-market rules used
 
@@ -164,7 +207,8 @@ power, stored energy, no simultaneous charging and discharging, the day ends wit
 Each profile's state of charge goes through a rainflow count (ASTM E1049, three-point method) and a SoC histogram.
 The arbitrage profiles are also solved for 1-4 h in half-hour steps, which gives the revenue of a battery whose
 energy has faded below its nominal value. Revenue in the NPV is 80 % of the perfect-foresight value (an assumed
-capture rate), in real terms, with the twelve months of prices repeated every year.
+capture rate; 45, 60 and 100 % as a sensitivity), in real terms, with the twelve months of prices repeated every
+year.
 
 ### 2. Ageing model
 
@@ -272,9 +316,9 @@ guarantees on one cycle a day). Actual warranties are confidential and differ by
   a narrower SoC window helps only through shallower cycles; the depth exponent `beta` cannot be identified from
   full-depth tests and is 1 (energy throughput).
 - **Perfect foresight, one price year.** The arbitrage profiles know every price of the day and the twelve months
-  from October 2025 are repeated for 17 years. Revenue is scaled by an assumed capture rate of 80 %. Balancing
-  revenue is not modelled, so the reserve profile is valued on capacity payments and costs only (the strategy
-  comparison within it is still valid: compliant strategies earn the same).
+  from October 2025 are repeated for 17 years. Revenue is scaled by an assumed capture rate of 80 % (45-100 % in
+  result 5). Balancing revenue is not modelled, so the reserve profile is valued on capacity payments and costs only
+  (the strategy comparison within it is still valid: compliant strategies earn the same).
 - **The reserve profile is synthetic**; its throughput (about 220 full cycles a year for 2 h) is an assumption.
 - **Capacity-market rules are simplified.** The four-hour reading of the net achievable power for batteries, the
   shedding of a shortfall at the clearing price, the 2026 calls as the design year and no residual value after the

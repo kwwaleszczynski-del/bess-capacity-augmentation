@@ -129,6 +129,10 @@ slow = [[2024, 1.0], [2025, 1.05], [2030, 1.06], [2035, 1.02], [2040, 0.98], [20
 discount_rate = 0.06       # real, ASSUMPTION
 discount_rates = [0.04, 0.06, 0.08, 0.10]
 arbitrage_capture = 0.8    # share of the perfect-foresight arbitrage revenue earned in practice, ASSUMPTION
+# Capture rates of the sensitivity: the median NEM battery earned 45 % of perfect foresight on its offered capacity
+# in Oct 2025 - Sep 2026 (nem-battery-behaviour), a day-ahead forecast + MILP for 1 MW / 2 MWh 83 % in a backtest on
+# Polish SDAC prices (pl-bess-paper-trading)
+capture_rates = [0.45, 0.6, 0.8, 1.0]
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Generalised manufacturer warranty (detailed schedules are usually confidential). Sources: Tesla Megapack 2 XL

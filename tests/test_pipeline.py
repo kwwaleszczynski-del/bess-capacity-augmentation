@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -5,7 +7,11 @@ import pytest
 from bess_augment import config as C
 from bess_augment.aging import AgingModel
 from bess_augment.dispatch import ProfileResult
-from bess_augment.pipeline import compliance_years, curve_for, make_case, profile_summary, stresses
+from bess_augment.economics import cashflows
+from bess_augment.fleet import Plan, simulate
+from bess_augment.pipeline import (capture_sensitivity, compliance_years, curve_for, make_case, profile_summary,
+                                   stresses)
+from bess_augment.strategies import bridge_plan
 
 
 def _profile(revenue, energy=2.0, n=96 * 30):
@@ -49,3 +55,25 @@ def test_profile_summary_columns(cfg, profiles):
     table = profile_summary(cfg, profiles, stresses(profiles))
     assert {"cycles_per_day", "rainflow_fec_per_year", "mean_soc"} <= set(table.columns)
     assert len(table) == len(profiles)
+
+
+def test_capture_sensitivity_matches_cashflows(cfg, model, daily_cycle_stress):
+    case = make_case(cfg, model, daily_cycle_stress, 2.0, cfg["analysis"]["temp_c"])
+    econ = C.economics_for(cfg, 1.0, 2.0, case.years)
+    curve = pd.Series({1.0: 200_000.0, 2.0: 400_000.0})
+    plans = {"none": Plan("none", 2.0), "overbuild": bridge_plan(case, []), "augment_opt": bridge_plan(case, [8])}
+    key = dict(duration_h=2.0, profile=cfg["analysis"]["base_profile"], temp_c=cfg["analysis"]["temp_c"],
+               scenario="base")
+    pv = {k: cashflows(p, simulate(p, case), econ, curve)[1] for k, p in plans.items()}
+    assert pv["overbuild"]["pv_arbitrage"] == pytest.approx(pv["augment_opt"]["pv_arbitrage"], rel=1e-6)
+    assert pv["none"]["pv_arbitrage"] < pv["overbuild"]["pv_arbitrage"]          # a faded battery earns less
+    out = capture_sensitivity(cfg, pd.DataFrame([dict(key, strategy=k, plan=plans[k].label(), **v)
+                                                 for k, v in pv.items()]))
+    assert len(out) == len(plans) * len(cfg["economics"]["capture_rates"])
+    for c, g in out.groupby("capture_rate"):
+        e = replace(econ, arbitrage_capture=c)
+        for k, p in plans.items():
+            r = g[g["strategy"] == k].iloc[0]
+            assert r["npv"] == pytest.approx(cashflows(p, simulate(p, case), e, curve)[1]["npv"])
+        assert g.loc[g["strategy"] == "augment_opt", "npv_vs_augment_opt"].iloc[0] == 0
+        assert g["npv_vs_best"].max() == 0
