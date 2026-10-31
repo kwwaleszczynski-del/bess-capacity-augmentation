@@ -77,7 +77,7 @@ def soh_by_profile(cfg: dict, paths: pd.DataFrame) -> go.Figure:
             call = C.requirement_mwh(cfg, 1.0, d, v, mode="call") / d * 100
             if call < 99:
                 fig.add_hline(call, line=dict(color=MUTED, width=1, dash="dot"), row=1, col=j,
-                              annotation_text=f"call 6.08.2026, {spec['label']}", annotation_position="bottom right",
+                              annotation_text=f"call 6.08.2026, {spec['label']}", annotation_position="bottom left",
                               annotation_font_color=MUTED)
     fig.update_xaxes(title_text="contract year")
     fig.update_yaxes(title_text="available energy, % of initial", row=1, col=1)
@@ -120,7 +120,7 @@ def strategy_energy(cfg: dict, paths: pd.DataFrame, profile: str) -> go.Figure:
                             hovertemplate="%{y:.2f} MWh<extra>" + STRATEGIES[s] + "</extra>")
         req = C.requirement_mwh(cfg, 1.0, d)
         fig.add_hline(req, line=dict(color=INK, width=1.5, dash="dash"), row=1, col=j,
-                      annotation_text="requirement", annotation_font_color=INK2)
+                      annotation_text="requirement", annotation_position="bottom", annotation_font_color=INK2)
         fig.update_yaxes(title_text="available energy, MWh" if j == 1 else None, row=1, col=j)
     fig.update_xaxes(title_text="contract year")
     return _layout(fig, f"Available energy by strategy ({_plabel(cfg, profile)}, {t:g} degC)", height=470)
@@ -177,7 +177,7 @@ def risk_bands(cfg: dict, bands: pd.DataFrame, duration: float, profile: str) ->
         fig.add_scatter(x=q["year"], y=q["p50"], name=name + " (median, 5-95 %)", legendgroup=name,
                         line=dict(color=color, width=2), hovertemplate="%{y:.2f} MWh<extra>" + name + "</extra>")
     fig.add_hline(C.requirement_mwh(cfg, 1.0, duration), line=dict(color=INK, width=1.5, dash="dash"),
-                  annotation_text="requirement", annotation_font_color=INK2)
+                  annotation_text="requirement", annotation_position="bottom", annotation_font_color=INK2)
     fig.update_xaxes(title_text="contract year")
     fig.update_yaxes(title_text="available energy at year end, MWh")
     return _layout(fig, f"Uncertainty of the ageing model: {duration:g} h battery, {_plabel(cfg, profile)}",
@@ -240,7 +240,7 @@ def warranty_chart(cfg: dict, warranty: pd.DataFrame) -> go.Figure:
                             legendgroup=name, showlegend=j == 1, line=dict(color=PROF_COLOR[name], width=2),
                             row=1, col=j, hovertemplate="%{y:,.0f} cycles<extra>" + _plabel(cfg, name) + "</extra>")
         fig.add_hline(w["fec_total"], line=dict(color=INK, width=1.5, dash="dash"), row=1, col=j,
-                      annotation_text="throughput allowance", annotation_font_color=INK2)
+                      annotation_text="throughput allowance", annotation_position="top left", annotation_font_color=INK2)
     fig.update_xaxes(title_text="year of operation")
     fig.update_yaxes(title_text="cumulative equivalent full cycles", row=1, col=1)
     return _layout(fig, f"Throughput against a generalised warranty ({w['fec_per_year']:g} cycles/year, "
