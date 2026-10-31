@@ -177,7 +177,7 @@ function draw() {
       hovertemplate: "%{x:,.0f} k PLN<extra></extra>"}],
       layout({margin: {l: 8, r: 16, t: 8, b: 44}, hovermode: "closest", yaxis: {automargin: true},
               xaxis: {title: "k PLN per MW", gridcolor: css("--grid"), zeroline: true, zerolinecolor: css("--axis"),
-                      range: [Math.min(...rows.map(s => npv[s].vs_best)) * 1.22 - 1, 8]}}),
+                      range: [Math.min(...rows.map(s => npv[s].vs_best)) * (innerWidth < 600 ? 1.45 : 1.22) - 1, 8]}}),
       {displayModeBar: false, responsive: true});
   } else {
     Plotly.react("npv", [], layout({annotations: [{text: "strategies were searched for the base temperature only",
